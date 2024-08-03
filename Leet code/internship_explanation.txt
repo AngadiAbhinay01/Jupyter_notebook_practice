@@ -1,0 +1,9 @@
+"During my internship at [Company Name], I worked on a project focused on developing an interview automation tool using generative AI. My role was primarily centered around data preprocessing and evaluating the relevancy of candidates' responses to interview questions.
+
+In this capacity, I received sets of technical and HR interview questions and the corresponding answers provided by candidates. My task was to determine whether the candidates' answers were relevant and correct. This involved analyzing the responses to ensure they matched the expected criteria and were accurate.
+
+To accomplish this, I used tools like Python and Pandas to manage and analyze the data. I developed a structured process for evaluating responses, which included defining criteria for correctness and relevance and systematically applying these criteria to each answer.
+
+One significant contribution I made was improving the accuracy of the evaluation process, which helped ensure that only the most relevant and correct answers were flagged for further review. This was critical for the reliability of the interview automation tool.
+
+Despite facing challenges with inconsistent answer formats and varying levels of detail in responses, I implemented strategies to standardize the evaluation process and improve consistency. Overall, my work significantly contributed to the project's success by enhancing the quality and reliability of the candidate evaluation process.
