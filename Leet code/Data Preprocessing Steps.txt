@@ -1,0 +1,229 @@
+Explain what are all data preprocessing steps and data cleaning steps in pandas?
+
+1. Loading Data:
+Reading Data: Use functions like pd.read_csv(), pd.read_excel(), pd.read_json(), etc., to load data from various file formats.
+
+Previewing Data: Methods like .head(), .tail(), and .info() are used to get an initial understanding of the data's structure and contents.
+
+code:
+import pandas as pd
+# Load a CSV file into a DataFrame
+df = pd.read_csv('file.csv')
+
+
+=====================================
+2. Handling Missing Values:
+Identifying Missing Values: Use .isnull() or .notnull() to check for missing values.
+
+Dropping Missing Values: Use .dropna() to remove rows or columns with missing values.
+
+Filling Missing Values: Use .fillna() to replace missing values with a specified value, mean, median, mode, or a forward/backward fill method (ffill/bfill).
+
+code:
+# Check for missing values
+missing_values = df.isnull().sum()
+print(missing_values)
+
+# Drop rows with any missing values
+df.dropna(inplace=True)
+# Drop columns with any missing values
+df.dropna(axis=1, inplace=True)
+
+# Fill missing values with a specific value
+df.fillna(0, inplace=True)
+# Fill missing values with the mean of the column
+df.fillna(df.mean(), inplace=True)
+
+
+=====================================
+3. Data Type Conversion:
+Checking Data Types: Use .dtypes to check the data types of each column.
+
+Converting Data Types: Use .astype() to convert data types, e.g., converting strings to datetime with pd.to_datetime() or numbers to categorical data with .astype('category').
+
+code:
+# Convert a column to a different data type
+df['column_name'] = df['column_name'].astype(int)
+
+# Convert a column to datetime
+df['date_column'] = pd.to_datetime(df['date_column'])
+
+======================================
+4. Handling Duplicates:
+Identifying Duplicates: Use .duplicated() to find duplicate rows.
+
+Removing Duplicates: Use .drop_duplicates() to remove duplicate rows based on all or specific columns.
+
+code:
+# Check for duplicate rows
+duplicates = df.duplicated()
+print(duplicates)
+
+# Drop duplicate rows
+df.drop_duplicates(inplace=True)
+
+======================================
+5. Normalization and Scaling:
+Normalization: Adjusting the range of data to [0, 1] using Min-Max Scaling.
+
+Standardization: Centering the data around the mean with a unit standard deviation, often done using StandardScaler from scikit-learn.
+
+code:
+# Min-Max Normalization
+df['column'] = (df['column'] - df['column'].min()) / (df['column'].max() - df['column'].min())
+
+# Standardization (Z-score normalization)
+df['column'] = (df['column'] - df['column'].mean()) / df['column'].std()
+
+======================================
+6. Encoding Categorical Variables:
+Label Encoding: Convert categorical labels into integer codes using .astype('category').cat.codes or LabelEncoder from scikit-learn.
+
+One-Hot Encoding: Use pd.get_dummies() to convert categorical variables into a set of binary (0 or 1) columns
+
+code:
+# Label Encoding
+df['category_column'] = df['category_column'].astype('category').cat.codes
+
+# One-Hot Encoding
+df = pd.get_dummies(df, columns=['category_column'])
+
+=======================================
+7. Feature Engineering:
+Creating New Features: Derive new columns based on existing ones, such as extracting the day, month, or year from a datetime column.
+
+Combining Features: Combine multiple features into one, such as concatenating first and last names.
+
+Transformations: Apply mathematical transformations, like logarithmic scaling or polynomial features.
+
+code:
+# Creating a new feature
+df['new_feature'] = df['feature1'] * df['feature2']
+
+
+# Drop a specific column
+df.drop('irrelevant_column', axis=1, inplace=True)
+
+======================================
+8. Handling Outliers:
+Identifying Outliers: Use statistical methods (e.g., Z-score, IQR) or visualization techniques (e.g., box plots) to identify outliers.
+
+Treating Outliers: Remove or cap extreme values or transform data using techniques like logarithms.
+
+code:
+from scipy import stats
+# Identify outliers using Z-score
+df = df[(np.abs(stats.zscore(df['column'])) < 3)]
+
+
+# Identify outliers using IQR
+Q1 = df['column'].quantile(0.25)
+Q3 = df['column'].quantile(0.75)
+IQR = Q3 - Q1
+df = df[~((df['column'] < (Q1 - 1.5 * IQR)) | (df['column'] > (Q3 + 1.5 * IQR)))]
+
+======================================
+9. Text Data Preprocessing:
+Lowercasing: Convert all text to lowercase to maintain consistency.
+Removing Punctuation and Special Characters: Use regular expressions to remove unwanted characters.
+Tokenization: Split text into individual words or tokens.
+Removing Stopwords: Remove common words that do not contribute to the meaning (e.g., "the," "is").
+Stemming and Lemmatization: Reduce words to their base or root form.
+
+code:
+# Apply log transformation
+df['log_column'] = np.log(df['column'] + 1)
+
+# Apply square root transformation
+df['sqrt_column'] = np.sqrt(df['column'])
+
+from sklearn.model_selection import train_test_split
+
+# Split the data into training and testing sets
+train, test = train_test_split(df, test_size=0.2, random_state=42)
+
+=========================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
