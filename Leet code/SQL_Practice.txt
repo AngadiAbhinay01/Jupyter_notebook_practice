@@ -1,0 +1,530 @@
+1. FIRST HIGHEST SALARY
+
+SELECT employee_id, employee_name
+FROM employees
+ORDER BY salary
+LIMIT 1;
+==================================================
+2. FIRST HIGHEST SALARY IF MULTIPLE EMPLOYESS WITH SAME SALARY
+
+SELECT employee_id, employee_name
+FROM employees
+WHERE salary = (SELECT MAX(salary) FROM employee);
+==============================================================
+3. 2ND HIGHEST SALARY
+
+SELECT employee_id, employee_name
+FROM employees
+ORDER BY salary
+LIMIT 1 OFFSET 1;
+==================================================================
+4. 2ND HIGHEST SALARY IF MULTIPLE EMPLOYEES WITH SAME SALARY
+
+SELECT employee_id, employee_name
+FROM employee
+WHERE salary = (SELECT MAX(salary) FROM employee WHERE salary < (SELECT MAX(salary) FROM employee)
+);
+===========================================================================
+5. Delete Duplicate rows from the table
+
+DELETE t1
+FORM table t1,
+table t2
+WHERE t1.id > t2.id AND t1.col_name = t2.col_name;
+=========================================================================
+
+
+
+
+
+
+
+
+
+175.Combine Two Tables
+
+SELECT p.firstName, p.lastName, a.city, a.state
+From Person p
+LEFT JOIN Address a
+ON p.personId = a.personId
+---------------------------------------------
+
+176. Second Highest Salary
+
+SELECT MAX(salary) as SecondHighestSalary
+From Employee
+Where salary < (SELECT MAX(salary) FROM Emloyee)
+
+&&&&&&&&&
+
+WITH cte AS
+(SELECT *,
+DENSE_RANK() OVER(ORDER BY salary DESC) as r
+FROM Employee)
+
+SELECT DISTINCT IFNULL(salary,null)
+FROM cte
+WHERE r = 2;
+----------------------------------------------
+
+177. Nth Highest Salary
+
+CREATE FUNCTION getNthHighestSalary(N INT)
+RETURNS INT
+BEGIN
+   RETURN(
+	
+	WITH cte AS
+	(SELECT *,
+	DENSE_RANK() OVER(ORDER BY salary DESC) as r
+	FROM Employee)
+	
+	SELECT DISTINCT IFNULL(salary,null)
+	FROM cte
+	WHERE r = N
+);
+END
+-------------------------------------------------
+178.Rank Scores
+
+SELECT score,
+DENSE_RANK() OVER(ORDER BY score DESC) as rank
+FROM Scores;
+---------------------------------------------------
+180.Consecutive numbers
+
+WITH cte AS
+(SELECT *,
+LEAD(num,1) OVER() AS next_1,
+LAG(num,2) OVER() AS next_2
+FROM Logs)
+
+SELECT DISTINCT num AS ConsecutiveNums
+FROM cte
+WHERE num = next_1 AND num = next_2
+-------------------------------------------------------
+181.Employees Earning More Than Their Managers
+
+SELECT e1.name
+FROM Employee e1
+LEFT JOIN Employee e2
+ON e1.managerId = e2.id
+WHERE e1.salary > e2.salary;
+--------------------------------------------------------
+182. Duplicate Emails
+
+SELECT eamil AS Email
+FROM Person
+GROUP BY eamil
+HAVING COUNT(DISTINCT id) >1;
+-----------------------------------------------
+183. Customer Who never order
+
+SELECT c.name AS Customers
+FROM Customer c
+LEFT JOIN Orders o
+ON c.id = o.customerId
+WHERE o.id IS NULL;
+------------------------------------------------
+184. Department Highest Salary
+
+WITH cte AS
+(SELECT d.name AS Department, e.name AS Employee, e.salary AS Salary,
+MAX(e.salary) OVER(PARTITION BY e.departmentId) AS max_salary
+FROM Employee e
+LEFT JOIN Department d
+ON e.departmentId = d.id)
+
+SELECT Department, Employee, Salary
+FROM cte
+WHERE e.salary = max_salary
+-------------------------------------------------------	
+185. Department Top Three Salaries
+
+WITH cte AS
+(SELECT d.name AS Department, e.name AS Employee, e.salary AS Salary,
+DENSE_RANK() OVER(PARTITION BY e.departmentId ORDER BY e.salary DESC) as max_salary
+FROM Employee e
+LEFT JOIN Department d
+ON e.departmentid = d.id)
+
+SELECT Department, Employee, Salary
+FROM cte
+WHERE max_salary <= 3
+
+---------------------------------------------------------
+196. Delete Duplicate Emails
+
+DELETE p1
+FROM Person p1,
+Person p2
+WHERE p1.email = p2.email AND p1.id > p2.id
+-------------------------------------------------------------
+197. Rising Temperature
+
+WITH cte AS
+(SELECT *,
+DATE_ADD(recordDate INTERVAL -1 DAY) AS yesterday_date,
+LAG(recordDate) OVER(ORDER BY recordDate) AS pre_recordDate,
+LAG(temperature) OVER(ORDER BY recordDate) AS pre_temperature
+FROM Weather)
+
+
+FROM cte
+WHERE yesterday_date = pre_recordDate
+AND temperature > pre_temperature;
+--------------------------------------------------------------
+
+584. Find Customer Referee
+
+SELECT name
+FROM Customer
+WHERE referee_id <> 2 OR referee_id IS NULL;
+
+---------------------------------------------------------------
+586. Customer Placing the Largest Number of Orders
+
+WITH cte AS
+(SELECT customer_number, COUNT(order_number) AS max_ord
+FROM Orders
+GROUP BY customer_number)
+
+SELECT customer_number
+FROM cte
+WHERE max_ord = (SELECT MAX(max_ord) FROM cte);
+-----------------------------------------------------------------
+595. Big Countries
+
+SELECT name, population, area
+FROM WORLD
+WHERE area >= 3000000 OR population >= 25000000;
+
+----------------------------------------------------------------------
+596. Classes More Than 5 Students
+
+SELECT class
+FROM Courses
+GROUP BY class
+HAVING COUNT(class) >= 5;
+--------------------------------------------------------------------
+601. Human Traffic of Stadium
+
+WITH cte as
+(SELECT s.id, s.visit_date, s.people,
+LEAD(s.people,1) OVER(ORDER BY id) AS next1,
+LEAD(s.people,2) OVER(ORDER BY id) AS next2,
+LAG(s.people,1) OVER(ORDER BY id) AS prev1,
+LAG(s.people,2) OVER(ORDER BY id) AS prev2
+FROM Stadium s)
+
+SELECT id, visit_date, people
+FROM cte
+WHERE (cte.people >= 100 AND cte.next1 >= 100 AND cte.next2 >= 100)
+    OR (cte.people >= 100 AND cte.next1 >= 100 AND cte.prev1 >= 100)
+	  OR (cte.people >= 100 AND cte.prev1 >= 100 AND cte.prev2 >= 100)
+ORDER BY visit_date;
+----------------------------------------------------------------------------------
+607. Sales Person
+
+WITH cte AS
+(SELECT sales_id
+FROM Company c
+LEFT JOIN Orders o
+ON c.com_id = o.com_id
+WHERE c.name LIKE 'RED')
+
+SELECT name
+FROM SalesPerson
+WHERE sales_id NOT IN(SELECT DISTINCT sales_id FROM cte)
+-----------------------------------------------------------------------------------
+608. Tree Node
+
+SELECT id,
+CASE
+	WHEN p_id is NULL THEN 'Root'
+	WHEN id NOT IN(SELECT p_id FROM Tree WHERE p_id IS NOT NULL) THEN 'Leaf'
+	ELSE 'Inner'
+END AS type
+FROM Tree
+ORDER BY id;
+--------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
