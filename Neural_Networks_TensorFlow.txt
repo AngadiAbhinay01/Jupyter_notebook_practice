@@ -1,0 +1,105 @@
+1. Convolution Layer (Conv Layer):
+
+This layer extracts features from the input image. A filter (kernel) is applied over the image, scanning it in small regions. Each filter detects specific patterns such as edges, corners, or textures.
+
+The output is called a feature map which highlights the presence of particular features in the image.
+
+===========================================
+2. ReLU Activation Layer:
+
+After the convolution operation, the Rectified Linear Unit (ReLU) applies a non-linear activation function. ReLU replaces all negative values in the feature map with zero, introducing non-linearity to help the network learn more complex patterns.
+
+This ensures that the network doesn't behave like a simple linear model.
+
+===========================================
+3. Max Pooling Layer:
+
+Max pooling reduces the spatial dimensions (width and height) of the feature maps while retaining the most important information. It does this by sliding a small window over the feature map and selecting the maximum value in that region.
+
+This reduces computational complexity, prevents overfitting, and provides spatial invariance.
+
+===========================================
+4. Fully Connected Layer (Dense Layer):
+
+The output from the previous layers (flattened into a 1D vector) is passed to fully connected layers. These layers learn the mapping between the high-level features extracted by the previous layers and the final output.
+
+In a digit recognition task, the final fully connected layer outputs probabilities for each digit (0-9) using a softmax function. The digit with the highest probability is chosen as the model’s prediction.
+
+
+
+
+CODE
+=====
+# 1. Import core Keras modules from TensorFlow
+from tensorflow.keras.models import Sequential                   # Model architecture
+from tensorflow.keras.layers import Dense, Flatten, Dropout     # Layers to build the network
+from tensorflow.keras.datasets import mnist                     # Built-in dataset
+from tensorflow.keras.optimizers import Adam                    # Optimizer
+from tensorflow.keras.losses import SparseCategoricalCrossentropy  # Loss function
+from tensorflow.keras.metrics import Accuracy                   # Evaluation metric
+
+# 2. Load the MNIST dataset (handwritten digits: 0–9)
+#    Dataset is split into training and test sets
+(X_train, y_train), (X_test, y_test) = mnist.load_data()
+
+# 3. Normalize the data to scale pixel values between 0 and 1
+X_train = X_train / 255.0
+X_test = X_test / 255.0
+
+# 4. Initialize a Sequential model (a linear stack of layers)
+model = Sequential()
+
+# 5. Add layers to the model
+model.add(Flatten(input_shape=(28, 28)))        # Flattens 28x28 image to 784 vector
+model.add(Dense(128, activation='relu'))        # Hidden layer with 128 neurons, ReLU activation
+model.add(Dropout(0.2))                         # Dropout layer to prevent overfitting (20% dropped)
+model.add(Dense(64, activation='relu'))         # Another hidden layer
+model.add(Dense(10, activation='softmax'))      # Output layer with 10 neurons (for 10 classes)
+
+# 6. Compile the model
+#    - Optimizer: Adam
+#    - Loss: Sparse Categorical Crossentropy (since labels are integers)
+#    - Metric: Accuracy
+model.compile(
+    optimizer=Adam(),
+    loss=SparseCategoricalCrossentropy(),
+    metrics=[Accuracy()]
+)
+
+# 7. Train the model on training data
+#    - Epochs: number of complete passes through training data
+#    - Verbose: 1 = progress bar
+model.fit(X_train, y_train, epochs=10, verbose=1)
+
+# 8. Evaluate the model on test data
+model.evaluate(X_test, y_test)
+
+# 9. Predict on new data
+predictions = model.predict(X_test)       # Predict probability for each class
+print(predictions[0])                     # Show probabilities for first test image
+print(predictions[0].argmax())            # Show predicted class
+print(y_test[0])                          # Actual class
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
